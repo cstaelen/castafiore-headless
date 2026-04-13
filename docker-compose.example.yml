@@ -1,0 +1,10 @@
+services:
+  castafiore-headless:
+    image: cstaelen/castafiore-headless:latest
+    devices:
+      - /dev/snd
+    ports:
+      - "8899:8899"
+    environment:
+      ALSA_DEVICE: plughw:0,0        # run `aplay -l` to list available devices
+    restart: unless-stopped
