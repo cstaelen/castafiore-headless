@@ -1,20 +1,27 @@
-<div style="display:flex; align-items: center; gap: 20px">
-  <img src="https://sawyerf.github.io/Castafiore/assets/assets/icon.5fe6ff6eff544d09eebc5dae63540fac.png" height="80" alt="Castafiore" />
-  &nbsp;&nbsp;&nbsp;
-  <img src="https://cdn.simpleicons.org/docker/2496ED" height="80" alt="Docker" />
-  &nbsp;&nbsp;&nbsp;
-  <span style="font-size:60px;">🔈</span>
-</div>
-
-<br />
+<div align="center">
 
 # Castafiore Headless
 
-A Docker image that runs [Castafiore](https://github.com/cstaelen/Castafiore) as a self-hosted web app with MPD as the audio backend. Designed for Raspberry Pi and headless servers.
+<img src="https://sawyerf.github.io/Castafiore/assets/assets/icon.5fe6ff6eff544d09eebc5dae63540fac.png" height="80" alt="Castafiore" align="middle" />&nbsp;&nbsp;
+<img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
+<img src=".github/assets/docker.png" height="80" alt="Docker" align="middle" />&nbsp;&nbsp;
+<img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
+<img src=".github/assets/raspberry-pi.png" height="80" alt="Raspberry Pi" align="middle" />&nbsp;&nbsp;
+<img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
+<img src=".github/assets/speaker.png" height="80" alt="Speaker" align="middle" />
 
+A Docker image that runs [Castafiore](https://github.com/sawyerf/Castafiore) as a self-hosted web app designed for Raspberry Pi and headless servers with hardware audio output.
 
+</div>
 
-⚠️ WORK IN PROGRESS 
+## Features
+
+- Self-hosted web UI for controlling your Navidrome music library
+- Control playback from any phone, tablet using the browser
+- Stream music directly to your Raspberry Pi speakers
+- Flexible audio output: local (browser) or remote (Raspberry Pi via MPD)
+
+⚠️ **WORK IN PROGRESS**
 
 ## Requirements
 
@@ -34,7 +41,7 @@ services:
     ports:
       - "8899:8899"
     environment:
-      ALSA_DEVICE: plughw:0,0  # run `make devices` or `aplay -l` to list available devices
+      ALSA_DEVICE: plughw:0,0 # run `make devices` or `aplay -l` to list available devices
     restart: unless-stopped
 ```
 
@@ -50,22 +57,20 @@ docker run --rm -p 8899:8899 \
 Then open `http://<host>:8899` in your browser and connect to your Navidrome/Subsonic server.
 
 Castafiore UI lets you switch between two output modes:
-- **Remote** — audio routed through MPD (default in headless mode)
-- **Local** — audio played directly in the browser via HTML audio
 
+- **Remote:** audio routed through MPD (default in headless mode)
+- **Local:** audio played directly in the browser via HTML audio
 
 ## Environment variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `8899` | HTTP port for the web server |
-| `ALSA_DEVICE` | `plughw:0,0` | ALSA output device for MPD |
+| Variable      | Default      | Description                  |
+| ------------- | ------------ | ---------------------------- |
+| `PORT`        | `8899`       | HTTP port for the web server |
+| `ALSA_DEVICE` | `plughw:0,0` | ALSA output device for MPD   |
 
 ## List available audio devices
 
 ```sh
-make devices
-# or
 docker run --rm --device /dev/snd cstaelen/castafiore-headless:latest aplay -l
 ```
 
