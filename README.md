@@ -41,7 +41,7 @@ services:
     ports:
       - "8899:8899"
     environment:
-      ALSA_DEVICE: plughw:0,0 # run `make devices` or `aplay -l` to list available devices
+      ALSA_DEVICE: plughw:0,0 # run `aplay -l` to list available devices
     restart: unless-stopped
 ```
 
