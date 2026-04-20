@@ -113,7 +113,7 @@ const apiHandler = async (req, res) => {
 			const body = await readBody(req)
 			const { urls, index = 0, queue = [] } = JSON.parse(body)
 			currentQueue = queue
-			const cmds = ['clear', ...urls.map(u => `addid "${u}"`), `play ${index}`]
+			const cmds = ['clear', ...urls.map(u => u.startsWith('http') ? `add "${u}"` : `addid "${u}"`), `play ${index}`]
 			await mpdCommand(cmds)
 			res.writeHead(200); res.end(JSON.stringify({ ok: true }))
 
