@@ -113,7 +113,8 @@ const apiHandler = async (req, res) => {
 			const body = await readBody(req)
 			const { urls, index = 0, queue = [] } = JSON.parse(body)
 			currentQueue = queue
-			const cmds = ['clear', ...urls.map(u => u.startsWith('http') ? `add "${u}"` : `addid "${u}"`), `play ${index}`]
+			console.log('[load] urls:', JSON.stringify(urls))
+			const cmds = ['clear', ...urls.map(u => u.trim().startsWith('http') ? `add "${u.trim()}"` : `addid "${u}"`), `play ${index}`]
 			await mpdCommand(cmds)
 			res.writeHead(200); res.end(JSON.stringify({ ok: true }))
 
@@ -131,6 +132,11 @@ const apiHandler = async (req, res) => {
 
 		} else if (req.method === 'POST' && endpoint === '/stop') {
 			await mpdCommand('stop')
+			res.writeHead(200); res.end(JSON.stringify({ ok: true }))
+
+		} else if (req.method === 'POST' && endpoint === '/clear') {
+			await mpdCommand('clear')
+			currentQueue = []
 			res.writeHead(200); res.end(JSON.stringify({ ok: true }))
 
 		} else if (req.method === 'POST' && endpoint === '/seek') {
