@@ -1,6 +1,6 @@
 # hadolint ignore=DL3008
 # ── Stage 1: build Castafiore web ───────────────────────────────────────────
-FROM node:20-slim AS builder
+FROM node:25-trixie-slim AS builder
 
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
@@ -16,7 +16,7 @@ ENV PLATFORM=web \
 RUN npx expo export -p web && npx workbox generateSW workbox-config.js
 
 # ── Stage 2: runtime ─────────────────────────────────────────────────────────
-FROM node:20-slim
+FROM node:25-trixie-slim
 
 ENV PORT=8899 \
     ALSA_DEVICE="plughw:0,0"

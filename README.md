@@ -10,6 +10,10 @@
 <img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
 <img src=".github/assets/speaker.png" height="80" alt="Speaker" align="middle" />
 
+![Docker build](https://img.shields.io/github/actions/workflow/status/cstaelen/castafiore-headless/docker-push.yml?label=Docker%20build&labelColor=555555&logoColor=ffffff&style=for-the-badge&logo=github)
+[![Docker Pulls](https://img.shields.io/docker/pulls/cstaelen/castafiore-headless.svg?color=1d64ed&labelColor=1d8fed&logoColor=ffffff&style=for-the-badge&label=pulls&logo=docker)](https://hub.docker.com/r/cstaelen/castafiore-headless)
+![Docker image size](https://img.shields.io/docker/image-size/cstaelen/castafiore-headless?style=for-the-badge)
+
 A Docker image that runs [Castafiore](https://github.com/sawyerf/Castafiore) as a self-hosted web app designed for Raspberry Pi and headless servers with hardware audio output.
 
 </div>
