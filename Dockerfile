@@ -81,7 +81,8 @@ COPY --from=builder /build/dist /app/dist
 COPY mpd.conf /etc/mpd.conf
 COPY mpd-server.js /app/mpd-server.js
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh \
+    && mkdir -p /var/lib/mpd/music /var/lib/mpd/playlists
 
 EXPOSE 8899
 
