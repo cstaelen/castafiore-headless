@@ -6,8 +6,6 @@
 <img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
 <img src=".github/assets/docker.png" height="80" alt="Docker" align="middle" />&nbsp;&nbsp;
 <img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
-<img src=".github/assets/raspberry-pi.png" height="80" alt="Raspberry Pi" align="middle" />&nbsp;&nbsp;
-<img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
 <img src=".github/assets/speaker.png" height="80" alt="Speaker" align="middle" />
 
 ![Docker build](https://img.shields.io/github/actions/workflow/status/cstaelen/castafiore-headless/docker-push.yml?label=Docker%20build&labelColor=555555&logoColor=ffffff&style=for-the-badge&logo=github)
