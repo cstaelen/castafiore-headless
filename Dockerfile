@@ -1,23 +1,39 @@
 # ── Stage 1: build Castafiore web ───────────────────────────────────────────
 FROM node:25-alpine AS builder
 
-RUN apk add --no-cache git
-
 WORKDIR /build
 
-RUN git clone --depth 1 --branch feat/headless https://github.com/cstaelen/Castafiore.git . \
-    && npm ci
+ADD --link https://github.com/cstaelen/Castafiore.git?ref=feat/headless /build
+
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 ENV PLATFORM=web \
     EXPO_PUBLIC_IS_HEADLESS=true
-RUN npx expo export -p web && npx workbox generateSW workbox-config.js
+
+RUN npx expo export -p web \
+	&& npx workbox generateSW workbox-config.js
 
 # ── Stage 2: build MPD (ALSA only) ───────────────────────────────────────────
 FROM node:25-alpine AS mpd-builder
 
-RUN apk add --no-cache meson ninja pkgconf g++ git alsa-lib-dev fmt-dev pcre2-dev curl-dev mpg123-dev libvorbis-dev opus-dev flac-dev faad2-dev
+RUN apk add --no-cache \
+    alsa-lib-dev=1.2.14-r2 \
+    curl-dev=8.17.0-r1 \
+    faad2-dev=2.11.2-r0 \
+    flac-dev=1.4.3-r2 \
+    fmt-dev=11.2.0-r1 \
+    g++=15.2.0-r2 \
+    libvorbis-dev=1.3.7-r2 \
+    meson=1.9.1-r0 \
+    mpg123-dev=1.33.3-r0 \
+    samurai=1.2-r7 \
+    opus-dev=1.5.2-r1 \
+    pcre2-dev=10.47-r0 \
+    pkgconf=2.5.1-r0
 
-RUN git clone --depth 1 --branch v0.24.4 https://github.com/MusicPlayerDaemon/MPD.git /mpd \
+ADD --link https://github.com/MusicPlayerDaemon/MPD.git?ref=v0.24.4 /mpd
+
+RUN meson setup /mpd/build /mpd --prefix=/usr/local --buildtype=release \
     && meson setup /mpd/build /mpd \
     --prefix=/usr/local \
     --buildtype=release \
@@ -74,15 +90,25 @@ FROM node:25-alpine
 ENV PORT=8899 \
     ALSA_DEVICE="plughw:0,0"
 
-RUN apk add --no-cache alsa-lib alsa-utils fmt pcre2 libcurl mpg123-libs libvorbis opus libflac faad2
+RUN apk add --no-cache \
+    alsa-lib=1.2.14-r2 \
+    alsa-utils=1.2.14-r4 \
+    faad2=2.11.2-r0 \
+    fmt=11.2.0-r1 \
+    libcurl=8.17.0-r1 \
+    libflac=1.4.3-r2 \
+    libvorbis=1.3.7-r2 \
+    mpg123-libs=1.33.3-r0 \
+    opus=1.5.2-r1 \
+    pcre2=10.47-r0
 
 COPY --from=mpd-builder /usr/local/bin/mpd /usr/local/bin/mpd
 COPY --from=builder /build/dist /app/dist
 COPY mpd.conf /etc/mpd.conf
 COPY mpd-server.js /app/mpd-server.js
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh \
-    && mkdir -p /var/lib/mpd/music /var/lib/mpd/playlists \
+COPY --chmod=+x entrypoint.sh /entrypoint.sh
+
+RUN mkdir -p /var/lib/mpd/music /var/lib/mpd/playlists \
     && touch /var/lib/mpd/state
 
 EXPOSE 8899
