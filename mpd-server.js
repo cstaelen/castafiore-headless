@@ -162,6 +162,10 @@ const apiHandler = async (req, res) => {
         }))
         break
       }
+      case 'GET /queue':
+        res.writeHead(200)
+        res.end(JSON.stringify({ queue: currentQueue }))
+        break
       default:
         res.writeHead(404)
         res.end(JSON.stringify({ error: 'Not found' }))
