@@ -17,19 +17,19 @@ RUN npx expo export -p web \
 FROM node:25-alpine AS mpd-builder
 
 RUN apk add --no-cache \
-    alsa-lib-dev=1.2.14-r2 \
-    curl-dev=8.17.0-r1 \
-    faad2-dev=2.11.2-r0 \
-    flac-dev=1.4.3-r2 \
-    fmt-dev=11.2.0-r1 \
-    g++=15.2.0-r2 \
-    libvorbis-dev=1.3.7-r2 \
-    meson=1.9.1-r0 \
-    mpg123-dev=1.33.3-r0 \
-    samurai=1.2-r7 \
-    opus-dev=1.5.2-r1 \
-    pcre2-dev=10.47-r0 \
-    pkgconf=2.5.1-r0
+    alsa-lib-dev \
+    curl-dev \
+    faad2-dev \
+    flac-dev \
+    fmt-dev \
+    g++ \
+    libvorbis-dev \
+    meson \
+    mpg123-dev \
+    samurai \
+    opus-dev \
+    pcre2-dev \
+    pkgconf
 
 ADD --link https://github.com/MusicPlayerDaemon/MPD.git?ref=v0.24.4 /mpd
 
@@ -84,31 +84,51 @@ RUN meson setup /mpd/build /mpd --prefix=/usr/local --buildtype=release \
     -Dwildmidi=disabled \
     && ninja -C /mpd/build install
 
-# ── Stage 3: runtime ─────────────────────────────────────────────────────────
-FROM node:25-alpine
-
-ENV PORT=8899 \
-    ALSA_DEVICE="plughw:0,0"
+# ── Stage 3: build CamillaDSP (Rust/musl) ────────────────────────────────────
+FROM rust:alpine AS camilladsp-builder
 
 RUN apk add --no-cache \
-    alsa-lib=1.2.14-r2 \
-    alsa-utils=1.2.14-r4 \
-    faad2=2.11.2-r0 \
-    fmt=11.2.0-r1 \
-    libcurl=8.17.0-r1 \
-    libflac=1.4.3-r2 \
-    libvorbis=1.3.7-r2 \
-    mpg123-libs=1.33.3-r0 \
-    opus=1.5.2-r1 \
-    pcre2=10.47-r0
+    alsa-lib-dev \
+    musl-dev
+
+ENV RUSTFLAGS="-C target-feature=-crt-static"
+
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/root/.cargo/registry \
+    cargo install \
+    --git https://github.com/HEnquist/camilladsp.git \
+    --tag v4.1.3 \
+    CamillaDSP
+
+# ── Stage 4: runtime ─────────────────────────────────────────────────────────
+FROM node:25-alpine
+
+ENV PORT=8899
+
+RUN apk add --no-cache \
+    alsa-lib \
+    alsa-utils \
+    faad2 \
+    fmt \
+    libcurl \
+    libflac \
+    libvorbis \
+    mpg123-libs \
+    opus \
+    pcre2 \
+    procps
 
 COPY --from=mpd-builder /usr/local/bin/mpd /usr/local/bin/mpd
+COPY --from=camilladsp-builder /usr/local/cargo/bin/camilladsp /usr/local/bin/camilladsp
 COPY --from=builder /build/dist /app/dist
 COPY mpd.conf /etc/mpd.conf
-COPY mpd-server.js /app/mpd-server.js
+COPY camilladsp/default.yml /etc/camilladsp-default.yml
+COPY camilladsp/presets/ /etc/camilladsp-presets/
+COPY api/ /app/api/
+COPY public/ /app/public/
 COPY --chmod=+x entrypoint.sh /entrypoint.sh
 
-RUN mkdir -p /var/lib/mpd/music /var/lib/mpd/playlists \
+RUN mkdir -p /var/lib/mpd/music /var/lib/mpd/playlists /config/presets \
     && touch /var/lib/mpd/state
 
 EXPOSE 8899

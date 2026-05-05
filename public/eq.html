@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EQ — Castafiore</title>
+  <link rel="stylesheet" href="/eq.css">
+</head>
+
+<body>
+
+  <header>
+    <div class="brand">
+      <a href="/" class="logo-link"><img src="/icon.png" class="logo" alt="Castafiore"></a>
+      <div>
+        EQ <span>·</span> Castafiore <small>— CamillaDSP</small>
+      </div>
+    </div>
+    <div id="toggle">
+      <div class="led on" id="led"></div>
+      <span id="tlabel">On</span>
+    </div>
+  </header>
+
+  <div class="eq-panel">
+    <div class="bands" id="bands"></div>
+  </div>
+
+  <div class="presets-panel">
+    <span class="pl">Load config file : </span>
+    <select id="presets"></select>
+  </div>
+
+  <p class="hint">
+    Mount <code>./config:/config</code> in Docker to enable the equalizer. Add <code>.yml</code> files in
+    <code>config/presets/</code> to create custom configs.
+  </p>
+
+  <a href="/" class="back-btn">← Back to Castafiore</a>
+
+  <script>
+    const timers = {}
+    let BANDS = []
+    let enabled = true
+
+    function bandLabel(id) {
+      const raw = id.replace('eq_', '')
+      return raw + 'Hz'
+    }
+
+    function buildBands(bands) {
+      BANDS = bands
+      const container = document.getElementById('bands')
+      container.textContent = ''
+      bands.forEach(id => {
+        const sl = document.createElement('input')
+        sl.type = 'range'; sl.className = 'v'; sl.id = 's' + id
+        sl.min = '-12'; sl.max = '12'; sl.step = '0.5'; sl.value = '0'
+        sl.setAttribute('orient', 'vertical')
+        sl.addEventListener('input', () => {
+          setFill(sl)
+          document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'))
+          clearTimeout(timers[id])
+          timers[id] = setTimeout(() => post('/api/dsp/eq', { band: id, gain: parseFloat(sl.value) }), 300)
+        })
+
+        const top = document.createElement('div'); top.className = 'gv-static'; top.textContent = '+12dB'
+        const bot = document.createElement('div'); bot.className = 'gv-static'; bot.textContent = '-12dB'
+        const freq = document.createElement('div'); freq.className = 'fl'; freq.textContent = bandLabel(id)
+        const wrap = document.createElement('div'); wrap.className = 'band'
+        wrap.append(top, sl, bot, freq)
+        container.appendChild(wrap)
+      })
+    }
+
+    function setFill(sl) {
+      sl.style.setProperty('--fill', ((sl.value - sl.min) / (sl.max - sl.min) * 100) + '%')
+    }
+
+    function applyGains(gains) {
+      BANDS.forEach(id => {
+        const sl = document.getElementById('s' + id)
+        sl.value = gains?.[id] ?? 0
+        setFill(sl)
+      })
+    }
+
+    async function post(url, body) {
+      try {
+        return await (await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        })).json()
+      } catch { }
+    }
+
+    function buildPresets(list, active) {
+      const sel = document.getElementById('presets')
+      sel.textContent = ''
+      list.forEach(name => {
+        const opt = document.createElement('option')
+        opt.value = name; opt.textContent = name
+        if (name === active) opt.selected = true
+        sel.appendChild(opt)
+      })
+      sel.addEventListener('change', async () => {
+        const d = await post('/api/dsp/preset/load', { preset: sel.value })
+        if (d) { buildBands(d.bands); applyGains(d.gains) }
+      })
+    }
+
+    function setUI(on) {
+      enabled = on
+      document.getElementById('led').className = 'led' + (on ? ' on' : '')
+      document.getElementById('tlabel').textContent = on ? 'On' : 'Off'
+      document.getElementById('toggle').classList.toggle('active', on)
+      BANDS.forEach(id => { document.getElementById('s' + id).disabled = !on })
+      document.getElementById('presets').disabled = !on
+    }
+
+    async function init() {
+      try {
+        const d = await (await fetch('/api/dsp/eq')).json()
+        buildBands(d.bands)
+        applyGains(d.gains)
+        buildPresets(d.presets, d.activePreset)
+        setUI(d.enabled !== false)
+      } catch {
+        buildBands(['eq_31', 'eq_63', 'eq_125', 'eq_250', 'eq_500', 'eq_1k', 'eq_2k', 'eq_4k', 'eq_8k', 'eq_16k'])
+        applyGains({})
+        buildPresets([], null)
+      }
+    }
+
+    document.getElementById('toggle').addEventListener('click', async () => {
+      const d = await post('/api/dsp/toggle', { enabled: !enabled })
+      if (d) { applyGains(d.gains); setUI(d.enabled) }
+    })
+
+    init()
+  </script>
+</body>
+
+</html>

@@ -5,6 +5,10 @@ services:
       - /dev/snd
     ports:
       - "8899:8899"
-    environment:
-      ALSA_DEVICE: plughw:0,0 # run `aplay -l` to list available devices
+    volumes:
+      - ./config:/config   # place camilladsp.yml here to override default config
+      - mpd_data:/var/lib/mpd
     restart: unless-stopped
+
+volumes:
+  mpd_data:
