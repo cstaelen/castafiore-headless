@@ -24,6 +24,7 @@ A Docker image that runs [Castafiore](https://github.com/sawyerf/Castafiore) as 
 - Control playback from any phone, tablet using the browser
 - Stream music directly to your Raspberry Pi speakers
 - Flexible audio output: local (browser) or remote (Raspberry Pi via MPD)
+- Equalizer powered by CamillaDSP using dedicated web UI
 
 ⚠️ **WORK IN PROGRESS**
 
@@ -65,12 +66,41 @@ Castafiore UI lets you switch between two output modes:
 - **Remote:** audio routed through MPD (default in headless mode)
 - **Local:** audio played directly in the browser via HTML audio
 
+## Equalizer (optional)
+
+A 10-band parametric EQ powered by [CamillaDSP](https://github.com/HEnquist/camilladsp) is available at `http://<host>:8899/eq`.
+
+To enable it, mount a local `config/` directory:
+
+```yaml
+volumes:
+  - ./config:/config   # optional — required to use the EQ
+```
+
+On first start, default presets (flat, bass, treble, rock...) are copied to `config/presets/`. The active config is always `config/camilladsp.yml`.
+
+**Directory layout:**
+
+```
+config/
+├── camilladsp.yml      # active config (written by the EQ UI)
+├── dsp-state.json      # enabled/disabled state (auto-managed)
+└── presets/
+    ├── flat.yml
+    ├── bass.yml
+    └── custom.yml      # add your own YML files here
+```
+
+Selecting a preset in the UI copies it to `camilladsp.yml`. Adjusting a slider writes directly to `camilladsp.yml` and keeps the active preset file in sync.
+
+The `ALSA_DEVICE` environment variable is automatically injected into all preset files on first start. Run `aplay -l` inside the container to list available devices.
+
 ## Environment variables
 
 | Variable      | Default      | Description                  |
 | ------------- | ------------ | ---------------------------- |
 | `PORT`        | `8899`       | HTTP port for the web server |
-| `ALSA_DEVICE` | `plughw:0,0` | ALSA output device for MPD   |
+| `ALSA_DEVICE` | `plughw:0,0` | ALSA output device (used by default CamillaDSP config) |
 
 ## List available audio devices
 

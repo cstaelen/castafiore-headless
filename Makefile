@@ -1,5 +1,5 @@
 IMAGE := cstaelen/castafiore-headless
-VERSION ?= latest
+VERSION ?= testing
 
 .PHONY: build push push-rpi build-multiarch setup-buildx run logs devices
 

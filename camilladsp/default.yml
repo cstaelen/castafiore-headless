@@ -1,0 +1,121 @@
+---
+# CamillaDSP default config for Castafiore Headless
+#
+# Override by mounting your own file: /etc/camilladsp.yml
+# Adjust `device` under playback to match your DAC (run `aplay -l` to list devices).
+#
+# The filter names eq_31 … eq_16k are required by the web EQ interface.
+
+devices:
+  samplerate: 48000
+  chunksize: 1024
+  capture:
+    type: RawFile
+    channels: 2
+    filename: /tmp/mpd.fifo
+    format: S32_LE
+  playback:
+    type: Alsa
+    channels: 2
+    device: "hw:0,0"
+    format: S32_LE
+
+filters:
+  eq_31:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 31
+      q: 1.0
+      gain: 0.0
+  eq_63:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 63
+      q: 1.0
+      gain: 0.0
+  eq_125:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 125
+      q: 1.0
+      gain: 0.0
+  eq_250:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 250
+      q: 1.0
+      gain: 0.0
+  eq_500:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 500
+      q: 1.0
+      gain: 0.0
+  eq_1k:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 1000
+      q: 1.0
+      gain: 0.0
+  eq_2k:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 2000
+      q: 1.0
+      gain: 0.0
+  eq_4k:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 4000
+      q: 1.0
+      gain: 0.0
+  eq_8k:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 8000
+      q: 1.0
+      gain: 0.0
+  eq_16k:
+    type: Biquad
+    parameters:
+      type: Peaking
+      freq: 16000
+      q: 1.0
+      gain: 0.0
+
+pipeline:
+  - type: Filter
+    channels: [0]
+    names:
+      - eq_31
+      - eq_63
+      - eq_125
+      - eq_250
+      - eq_500
+      - eq_1k
+      - eq_2k
+      - eq_4k
+      - eq_8k
+      - eq_16k
+  - type: Filter
+    channels: [1]
+    names:
+      - eq_31
+      - eq_63
+      - eq_125
+      - eq_250
+      - eq_500
+      - eq_1k
+      - eq_2k
+      - eq_4k
+      - eq_8k
+      - eq_16k
