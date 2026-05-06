@@ -26,8 +26,8 @@ jobs:
           push: false
           load: true
           tags: castafiore-headless:scan
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=cstaelen/castafiore-headless:buildcache-amd64
+          cache-to: type=registry,ref=cstaelen/castafiore-headless:buildcache-amd64,mode=max
 
       - name: Run Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
