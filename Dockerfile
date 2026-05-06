@@ -19,6 +19,7 @@ FROM node:25-alpine AS mpd-builder
 RUN apk add --no-cache \
     alsa-lib-dev \
     curl-dev \
+    expat-dev \
     faad2-dev \
     flac-dev \
     fmt-dev \
@@ -26,6 +27,7 @@ RUN apk add --no-cache \
     libvorbis-dev \
     meson \
     mpg123-dev \
+    nlohmann-json \
     samurai \
     opus-dev \
     pcre2-dev \
