@@ -3,12 +3,12 @@
 # Castafiore Headless
 
 <img src="https://sawyerf.github.io/Castafiore/assets/assets/icon.5fe6ff6eff544d09eebc5dae63540fac.png" height="80" alt="Castafiore" align="middle" />&nbsp;&nbsp;
-<img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
-<img src=".github/assets/docker.png" height="80" alt="Docker" align="middle" />&nbsp;&nbsp;
-<img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
-<img src=".github/assets/raspberry-pi.png" height="80" alt="Raspberry Pi" align="middle" />&nbsp;&nbsp;
-<img src=".github/assets/plus.png" height="16" alt="+" align="middle" />&nbsp;&nbsp;
-<img src=".github/assets/speaker.png" height="80" alt="Speaker" align="middle" />
+<img src="https://github.com/cstaelen/castafiore-headless/blob/main/.github/assets/plus.png?raw=true" height="16" alt="+" align="middle" />&nbsp;&nbsp;
+<img src="https://github.com/cstaelen/castafiore-headless/blob/main/.github/assets/docker.png?raw=true" height="80" alt="Docker" align="middle" />&nbsp;&nbsp;
+<img src="https://github.com/cstaelen/castafiore-headless/blob/main/.github/assets/plus.png?raw=true" height="16" alt="+" align="middle" />&nbsp;&nbsp;
+<img src="https://github.com/cstaelen/castafiore-headless/blob/main/.github/assets/raspberry-pi.png?raw=true" height="80" alt="Raspberry Pi" align="middle" />&nbsp;&nbsp;
+<img src="https://github.com/cstaelen/castafiore-headless/blob/main/.github/assets/plus.png?raw=true" height="16" alt="+" align="middle" />&nbsp;&nbsp;
+<img src="https://github.com/cstaelen/castafiore-headless/blob/main/.github/assets/speaker.png?raw=true" height="80" alt="Speaker" align="middle" />
 
 ![Docker build](https://img.shields.io/github/actions/workflow/status/cstaelen/castafiore-headless/docker-push.yml?label=Docker%20build&labelColor=555555&logoColor=ffffff&style=for-the-badge&logo=github)
 [![Docker Pulls](https://img.shields.io/docker/pulls/cstaelen/castafiore-headless.svg?color=1d64ed&labelColor=1d8fed&logoColor=ffffff&style=for-the-badge&label=pulls&logo=docker)](https://hub.docker.com/r/cstaelen/castafiore-headless)
