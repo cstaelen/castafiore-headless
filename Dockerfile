@@ -14,7 +14,7 @@ RUN npx expo export -p web \
 	&& npx workbox generateSW workbox-config.js
 
 # ── Stage 2: build MPD (ALSA only) ───────────────────────────────────────────
-FROM node:25-alpine AS mpd-builder
+FROM alpine AS mpd-builder
 
 RUN apk add --no-cache \
     alsa-lib-dev \
@@ -103,7 +103,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     CamillaDSP
 
 # ── Stage 4: runtime ─────────────────────────────────────────────────────────
-FROM node:25-alpine
+FROM alpine
 
 ENV PORT=8899
 
@@ -116,6 +116,7 @@ RUN apk add --no-cache \
     libflac \
     libvorbis \
     mpg123-libs \
+    nodejs \
     opus \
     pcre2 \
     procps

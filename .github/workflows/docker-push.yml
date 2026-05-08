@@ -70,8 +70,8 @@ jobs:
           outputs: type=image,name=cstaelen/castafiore-headless,push-by-digest=true,name-canonical=true
           cache-from: type=registry,ref=cstaelen/castafiore-headless:${{ matrix.cache-tag }}
           cache-to: type=registry,ref=cstaelen/castafiore-headless:${{ matrix.cache-tag }},mode=max
-          provenance: true
-          sbom: true
+          provenance: false
+          sbom: false
 
       - name: Export digest
         run: |
